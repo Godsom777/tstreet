@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "774508265901",
+    "project_id": "trenchesstreet-8c140",
+    "storage_bucket": "trenchesstreet-8c140.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774508265901:android:69f5396a426ee0db7c2124",
+        "android_client_info": {
+          "package_name": "com.trenches_street"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774508265901-9et8shjvvjn2o1lqnqdh9oamr2togclm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfm0t-toUbUUrg1jrmX7l1foLtc884iDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774508265901-9et8shjvvjn2o1lqnqdh9oamr2togclm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

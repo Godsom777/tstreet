@@ -48,7 +48,7 @@ Future<UserCredential?> signInWithGoogle(BuildContext context) async {
   );
   UserCredential userCredential = await _auth.signInWithCredential(credential);
   // perform post-sign-in operations before navigating
-  Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) =>  HomeScreen()));
   return userCredential;
 }
 
@@ -58,26 +58,88 @@ Future<UserCredential?> signInWithEmailAndPassword(String email, String password
       email: email,
       password: password,
     );
-    // perform post-sign-in operations before navigating
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    // On successful sign-in, navigate to HomeScreen or show a success message
+    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
     return credential;
   } on FirebaseAuthException catch (e) {
-    // show error messages to the user
+    // Handle sign-in errors
+    String errorMessage = "An error occurred. Please try again.";
+    if (e.code == 'user-not-found') {
+      errorMessage = "No user found for that email.";
+    } else if (e.code == 'wrong-password') {
+      errorMessage = "Wrong password provided for that user.";
+    }
+    // Show error dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Sign In Failed"),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+    return null;
+  } catch (e) {
+    // Handle any other errors
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text("An unexpected error occurred. Please try again."),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
     return null;
   }
 }
-
 Future<bool> registerUser(String email, String password, BuildContext context) async {
   try {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
-    // perform post-registration operations before navigating
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    // Perform post-registration operations before navigating
+    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
     return true;
+  } on FirebaseAuthException catch (e) {
+    String errorMessage = "An error occurred. Please try again.";
+    // Ensure the error code matches exactly what Firebase documentation states
+    if (e.code == 'email-already-in-use') {
+      errorMessage = "The email address is already in use by another account.";
+    } else if (e.code == 'weak-password') {
+      errorMessage = "The password provided is too weak.";
+    }
+    // Use ScaffoldMessenger to show error message in UI
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        duration: Duration(seconds: 5),
+      ),
+    );
+
+    return false;
   } catch (e) {
-    // handle exceptions
+    // Handle any other errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("An unexpected error occurred. Please try again."),
+        duration: Duration(seconds: 5),
+      ),
+    );
     return false;
   }
 }

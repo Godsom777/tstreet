@@ -1,53 +1,83 @@
 import 'dart:convert';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
-class FootballApiService {
-  final String _baseUrl = 'https://today-football-prediction.p.rapidapi.com';
-  final Map<String, String> _headers = {
-    'X-RapidAPI-Key': 'f06c1efc31msh1bbfec983428082p18e62ejsnddb14367dde6',
-    'X-RapidAPI-Host': 'today-football-prediction.p.rapidapi.com'
-  };
-
-
-///////EPL////////////////////////
-  Future<List<dynamic>> getDailyPredictions() async {
-    final response = await http.get(Uri.parse('$_baseUrl/predictions/list?market=1X2&league=1&page=1'),
-        headers: _headers);
-    if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      return body['matches'];
-    } else {
-      throw Exception('Failed to load daily predictions');
-    }
-  }
-
-  Future<List<dynamic>> getPredictionsByLeague(String league) async {
-    final response = await http.get(
-        Uri.parse('$_baseUrl/predictions/list?market=1X2&league=3&page=1'),
-        headers: _headers);
-   if (response.statusCode == 200) {
-  var body = jsonDecode(response.body);
-  if (body['matches'] != null) {
-    return body['matches'];
-  } else {
-    throw Exception('No matches found for market: OU25 and league: $league');
-  }
-} else {
-      throw Exception('Failed to load predictions for league: $league');
-    }
-  }
-
-
-Future<List<dynamic>> getTodaysMatches() async {
+Future<List<Match>> fetchLiveMatches() async {
   final response = await http.get(
-      Uri.parse('$_baseUrl/matches/today'),
-      headers: _headers);
+    Uri.parse('https://api-football-v1.p.rapidapi.com/v3/fixtures?live=all'),
+    headers: {
+      'x-rapidapi-key': '50348be291mshe485f874781559fp179065jsnc4bf8280f2d0',
+      'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+    },
+  );
+
   if (response.statusCode == 200) {
-    var body = jsonDecode(response.body);
-    return body['matches'];
+    List<dynamic> matchesJson = jsonDecode(response.body)['response'];
+    return matchesJson.map((json) => Match.fromJson(json)).toList();
   } else {
-    throw Exception('Failed to load today\'s matches');
+    throw Exception('Failed to load live matches');
   }
 }
 
+
+Future<List<Match>> dailyPredictions(id) async {
+  final response = await http.get(
+    Uri.parse('https://api-football-v1.p.rapidapi.com/v3/prediction?fixture=$id'),
+    headers: {
+      'x-rapidapi-key': '50348be291mshe485f874781559fp179065jsnc4bf8280f2d0',
+      'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> matchesJson = jsonDecode(response.body)['response'];
+    return matchesJson.map((json) => Match.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load Predictions');
+  }
+}
+
+
+
+
+
+class Match {
+  final int id;
+  final String homeTeam;
+  final String awayTeam;
+  final int homeGoals;
+  final int awayGoals;
+  final String long;
+  final int elapsed;
+  final String leagueLogo;
+  final String homeTeamLogo;
+  final String awayTeamLogo;
+  final String leagueName;
+  // final String win;
+  // final String predictionComment;
+
+  Match({required this.id, required this.homeTeam, required this.awayTeam, required this.homeGoals, required this.awayGoals, required this.long, required this.elapsed, 
+  required this.leagueLogo, required this.homeTeamLogo, required this.awayTeamLogo, required this.leagueName,
+   });
+
+  factory Match.fromJson(Map<String, dynamic> json) {
+    return Match(
+      id: json['fixture']['id'],
+      homeTeam: json['teams']['home']['name'],
+      awayTeam: json['teams']['away']['name'],
+      homeGoals: json['goals']['home'],
+      awayGoals: json['goals']['away'],
+      long: json['fixture']['status']['long'],
+      elapsed: json['fixture']['status']['elapsed'],
+      leagueLogo: json['league']['name'],
+      homeTeamLogo:json['teams']['home']['logo'],
+      awayTeamLogo:json['teams']['away']['logo'],
+      leagueName: json['league']['logo'],
+      // win: json['winner'],
+      // predictionComment: json['winner']['name']['comment'],
+
+
+
+    );
+  }
 }

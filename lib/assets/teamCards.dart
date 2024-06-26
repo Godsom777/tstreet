@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Provides SVG support for Flutter
 import 'package:trenches_street/assets/utils/SizeConfig.dart'; // Utility for responsive layout
 
+
+
+
+
+
+
 // Widget for displaying a card with two teams
 class Two_Teams_Card extends StatelessWidget {
   final dynamic prediction; // Holds data for the prediction
@@ -222,3 +228,4 @@ class MatchCard extends StatelessWidget {
     );
   }
 }
+

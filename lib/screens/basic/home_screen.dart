@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:getwidget/getwidget.dart";
@@ -5,8 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import "package:trenches_street/assets/teamCards.dart";
 import "package:trenches_street/assets/utils/SizeConfig.dart";
-
+import 'package:trenches_street/assets/teamCards.dart';
 import "../../assets/leagues.dart";
+import 'package:http/http.dart' as http;
+
+import "../../assets/utils/football_api_service.dart";
 import "../../components/daily_predictions.dart";
 
 class HomeScreen extends StatelessWidget {
@@ -14,6 +19,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -150,34 +156,106 @@ class HomeScreen extends StatelessWidget {
 
                         // Live Matches widget
                         SizedBox(
-                          height: SizeConfig.screenHeight! * 0.26,
-                          child: const SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 15.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  LiveMatches(),
-                                  SizedBox(
-                                    width: 10,
+                          height: 200,
+                          width: SizeConfig.screenWidth,
+                          child: FutureBuilder<List<Match>>(
+                            future: fetchLiveMatches(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Center(
+                                  child: ListView.builder(
+                                    itemCount: snapshot.data!.length,
+                                    // scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      Match match = snapshot.data![index];
+                                      return Container(
+                                        width: SizeConfig.screenWidth,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        padding: EdgeInsets.all(8),
+                                        margin: EdgeInsets.all(8),
+                                        child: Center(
+                                          child: ListTile(
+                                              titleAlignment:
+                                                  ListTileTitleAlignment.center,
+                                              title: Text(
+                                                '${match.homeTeam}'
+                                                ' '
+                                                '${match.homeGoals}  - '
+                                                '${match.awayGoals}'
+                                                ' ${match.awayTeam}',
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                                maxLines: 1,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              leading: CircleAvatar(
+                                                  maxRadius: 15,
+                                                  child: Image(
+                                                    image: NetworkImage(
+                                                      // Image for home team
+                                                      match.homeTeamLogo,
+                                                    ),
+                                                  )),
+                                              trailing: CircleAvatar(
+                                                  maxRadius: 15,
+                                                  child: Image(
+                                                    image: NetworkImage(
+                                                      // Image for home team
+                                                      match.awayTeamLogo,
+                                                    ),
+                                                  )),
+                                              subtitle: Center(
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      '${match.long}',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                      maxLines: 1,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Text(
+                                                      '\'${match.elapsed}',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                      maxLines: 1,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  LiveMatches(),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  LiveMatches(),
-                                ],
-                              ),
-                            ),
-                          ), // Widget for displaying live matches
+                                );
+                              } else if (snapshot.hasError) {
+                                return Text("${snapshot.error}");
+                              }
+                              return const SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child: CircularProgressIndicator());
+                            },
+                          ),
                         ),
 
                         // Upcoming Matches section
                         Padding(
                           padding: const EdgeInsets.only(left: 15.0, bottom: 8),
                           child: Text(
-                              'Upcoming Matches', // Text for "Upcoming Matches"
+                              'Upcoming Matches/Predictions', // Text for "Upcoming Matches"
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -194,24 +272,7 @@ class HomeScreen extends StatelessWidget {
                           team1Logo: 'images/manchester-city.svg',
                           team2Logo: 'images/liverpool-fc.svg',
                         ),
-                        const MatchCard(
-                          team1Name: "Man. City",
-                          team2Name: "Liverpool",
-                          matchTime: '16:00',
-                          matchDate: 'Today',
-                          predictedWinner: 'LIVERPOOL',
-                          team1Logo: 'images/manchester-city.svg',
-                          team2Logo: 'images/liverpool-fc.svg',
-                        ),
-                        const MatchCard(
-                          team1Name: "Man. City",
-                          team2Name: "Liverpool",
-                          matchTime: '16:00',
-                          matchDate: 'Today',
-                          predictedWinner: 'LIVERPOOL',
-                          team1Logo: 'images/manchester-city.svg',
-                          team2Logo: 'images/liverpool-fc.svg',
-                        ),
+                      
                       ]),
                 ),
               )

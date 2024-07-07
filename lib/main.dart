@@ -6,6 +6,7 @@ import 'package:trenches_street/auth/SignIn/SignUpScreens.dart';
 import 'package:trenches_street/auth/auth_service.dart';
 import 'package:trenches_street/screens/basic/home_screen.dart';
 
+
 Future<void> _initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

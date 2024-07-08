@@ -85,7 +85,7 @@ class _LivePredictionsWidgetState extends State<LivePredictionsWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: SizeConfig.screenHeight! * 0.15,
+      height: SizeConfig.screenHeight! / 6,
       width: SizeConfig.screenWidth,
       child: FutureBuilder<Map<String, dynamic>>(
         future: _matchAndPredictions,
@@ -198,7 +198,7 @@ class _DatedPredictionsWidgetState extends State<DatedPredictionsWidget> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => matchCardWithPrediction(
+                              builder: (context) => TeamDetailsScreen(
                                     match: match,
                                     prediction: predictions,
                                   )),

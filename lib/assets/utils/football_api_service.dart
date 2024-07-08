@@ -19,11 +19,10 @@ Future<List<Match>> fetchLiveMatches() async {
   }
 }
 
-
-
-
 Future<List<Match>> fetchPredictionsForFixture(int matchId) async {
-  var response = await http.get(Uri.parse('https://api-football-v1.p.rapidapi.com/v3/predictions?matchId=$matchId'),
+  var response = await http.get(
+    Uri.parse(
+        'https://api-football-v1.p.rapidapi.com/v3/predictions?matchId=$matchId'),
     headers: {
       'x-rapidapi-key': '50348be291mshe485f874781559fp179065jsnc4bf8280f2d0',
       'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
@@ -32,37 +31,34 @@ Future<List<Match>> fetchPredictionsForFixture(int matchId) async {
 
   if (response.statusCode == 200) {
     List<dynamic> matchesJson = json.decode(response.body)['response'];
-    List<Match> matches = matchesJson.map((json) => Match.fromJson(json)).toList();
+    List<Match> matches =
+        matchesJson.map((json) => Match.fromJson(json)).toList();
     return matches;
   } else {
     throw Exception('Failed to load predictions');
   }
 }
 
-
-
-
 Future<List<Match>> fetchMatchesByDate() async {
   // Format the date as required by your API
   // String formattedDate = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-  var response = await http.get(Uri.parse('https://api-football-v1.p.rapidapi.com/v3/fixtures?next=20'),
+  var response = await http.get(
+    Uri.parse('https://api-football-v1.p.rapidapi.com/v3/fixtures?next=20'),
     headers: {
       'x-rapidapi-key': '50348be291mshe485f874781559fp179065jsnc4bf8280f2d0',
       'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
-    },);
+    },
+  );
 
   if (response.statusCode == 200) {
     List<dynamic> matchesJson = jsonDecode(response.body)['response'];
-    List<Match> matches = matchesJson.map((json) => Match.fromJson(json)).toList();
+    List<Match> matches =
+        matchesJson.map((json) => Match.fromJson(json)).toList();
     return matches;
   } else {
     throw Exception('Failed to load matches');
   }
 }
-
-
-
-
 
 class Match {
   final int? id;
@@ -82,9 +78,21 @@ class Match {
   // final String win;
   // final String predictionComment;
 
-  Match({required this.id, required this.homeTeamId, required this.awayTeamId, required this.homeTeam, required this.awayTeam, required this.homeGoals, required this.awayGoals, required this.long, required this.elapsed, 
-  required this.leagueLogo, required this.homeTeamLogo, required this.awayTeamLogo, required this.leagueName,
-   });
+  Match({
+    required this.id,
+    required this.homeTeamId,
+    required this.awayTeamId,
+    required this.homeTeam,
+    required this.awayTeam,
+    required this.homeGoals,
+    required this.awayGoals,
+    required this.long,
+    required this.elapsed,
+    required this.leagueLogo,
+    required this.homeTeamLogo,
+    required this.awayTeamLogo,
+    required this.leagueName,
+  });
 
   factory Match.fromJson(Map<String, dynamic> json) {
     return Match(
@@ -98,18 +106,14 @@ class Match {
       long: json['fixture']['status']['long'],
       elapsed: json['fixture']['status']['elapsed'],
       leagueName: json['league']['name'],
-      homeTeamLogo:json['teams']['home']['logo'],
-      awayTeamLogo:json['teams']['away']['logo'],
+      homeTeamLogo: json['teams']['home']['logo'],
+      awayTeamLogo: json['teams']['away']['logo'],
       leagueLogo: json['league']['logo'],
       // win: json['winner'],
       // predictionComment: json['winner']['name']['comment'],
-
-
-
     );
   }
 }
-
 
 class Prediction {
   final int? winnerId;
@@ -121,35 +125,45 @@ class Prediction {
   final String? awayGoals;
   final String? advice;
   final Map<String, String>? percent;
+  final String? homeForm;
+  final String? awayForm;
+  final Map<String, String>? formPercentage;
 
-  Prediction({
-    required this.winnerId,
-    required this.winnerName,
-    required this.winnerComment,
-    required this.winOrDraw,
-    required this.underOver,
-    required this.homeGoals,
-    required this.awayGoals,
-    required this.advice,
-    required this.percent,
-  });
+  Prediction(
+      {required this.winnerId,
+      required this.winnerName,
+      required this.winnerComment,
+      required this.winOrDraw,
+      required this.underOver,
+      required this.homeGoals,
+      required this.awayGoals,
+      required this.advice,
+      required this.percent,
+      required this.homeForm,
+      required this.awayForm,
+      required this.formPercentage});
 
   factory Prediction.fromJson(Map<String, dynamic> json) {
     return Prediction(
-      winnerId: json['predictions']['winner']['id'],
-      winnerName: json['predictions']['winner']['name'],
-      winnerComment: json['predictions']['winner']['comment'],
-      winOrDraw: json['predictions']['win_or_draw'],
-      underOver: json['predictions']['under_over'],
-      homeGoals: json['predictions']['goals']['home'],
-      awayGoals: json['predictions']['goals']['away'],
-      advice: json['predictions']['advice'],
-      percent: {
-        'home': json['predictions']['percent']['home'],
-        'draw': json['predictions']['percent']['draw'],
-        'away': json['predictions']['percent']['away'],
-      },
-    );
+        winnerId: json['predictions']['winner']['id'],
+        winnerName: json['predictions']['winner']['name'],
+        winnerComment: json['predictions']['winner']['comment'],
+        winOrDraw: json['predictions']['win_or_draw'],
+        underOver: json['predictions']['under_over'],
+        homeGoals: json['predictions']['goals']['home'],
+        awayGoals: json['predictions']['goals']['away'],
+        advice: json['predictions']['advice'],
+        percent: {
+          'home': json['predictions']['percent']['home'],
+          'draw': json['predictions']['percent']['draw'],
+          'away': json['predictions']['percent']['away'],
+        },
+        homeForm: json['teams']['home']['league']['form'],
+        awayForm: json['teams']['away']['league']['form'],
+        formPercentage: {
+          'home': json['comparison']['form']['home'],
+          'away': json['comparison']['form']['away']
+        });
   }
 }
 
@@ -159,5 +173,3 @@ class MatchPrediction {
 
   MatchPrediction({required this.match, required this.prediction});
 }
-
-

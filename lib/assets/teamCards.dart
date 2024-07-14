@@ -20,10 +20,18 @@ class matchCardWithPrediction extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
-        height: SizeConfig.screenHeight! / 4.5,
+        width: SizeConfig.screenWidth! / 1.2,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Color.fromARGB(255, 248, 255, 247),
           borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(255, 18, 71, 1).withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            ),
+          ],
         ),
         padding: const EdgeInsets.all(8),
         margin: const EdgeInsets.all(8),
@@ -98,7 +106,7 @@ class matchCardWithPrediction extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  width: 10,
+                  width: 5,
                 ),
                 Column(
                   children: [
@@ -126,7 +134,7 @@ class matchCardWithPrediction extends StatelessWidget {
                         /////////////////
                           Container(
                       height: 30,
-                      width: 70,
+                      width: 100,
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 3, 56, 5),
                         borderRadius: BorderRadius.circular(5),
@@ -166,13 +174,10 @@ class matchCardWithPrediction extends StatelessWidget {
                 ),
                 //////////////////
                 ///Score for Away Team////
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text('${match.awayGoals ?? ' '}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                      )),
-                ),
+                Text('${match.awayGoals ?? ' '}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                    )),
                 SizedBox(
                   width: 50,
                   child: Column(
@@ -411,9 +416,10 @@ class TeamDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Prediction Details',
+        automaticallyImplyLeading: false,
+        title:  Text('${match.leagueName}',
             style: TextStyle(
-                fontSize: 24,
+                fontSize: 21,
                 color: Colors.white,
                 fontWeight: FontWeight.bold)),
        
@@ -431,7 +437,7 @@ class TeamDetailsScreen extends StatelessWidget {
                       ),
                       opacity: 0.25,
                       fit: BoxFit.cover)),
-              height: SizeConfig.screenHeight! / 3.5,
+              height: SizeConfig.screenHeight! / 4,
               width: SizeConfig.screenWidth,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -440,21 +446,21 @@ class TeamDetailsScreen extends StatelessWidget {
                     tag:
                         'teamLogo${match.homeTeamId}', // Use homeTeamId for the tag
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Column(
                             children: [
                               CircleAvatar(
-                                radius: 40,
+                                radius: 25,
                                 backgroundImage: NetworkImage(match
                                     .homeTeamLogo!), // Assuming homeTeamLogo is available in Match
                               ),
                               Text(
                                 '${match.homeTeam}',
                                 style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
                               )
@@ -463,21 +469,21 @@ class TeamDetailsScreen extends StatelessWidget {
                           const Text(
                             'VS',
                             style: TextStyle(
-                                fontSize: 32,
+                                fontSize: 22,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
                           Column(
                             children: [
                               CircleAvatar(
-                                radius: 40,
+                                radius: 25,
                                 backgroundImage: NetworkImage(match
                                     .awayTeamLogo!), // Assuming homeTeamLogo is available in Match
                               ),
                               Text(
                                 '${match.awayTeam}',
                                 style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
                               )
@@ -489,11 +495,11 @@ class TeamDetailsScreen extends StatelessWidget {
                   ),
                   Center(
                       child: Padding(
-                    padding: const EdgeInsets.all(18.0),
+                    padding: const EdgeInsets.all(28.0),
                     child: Text(
                       '${prediction.advice}',
                       style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
@@ -511,12 +517,12 @@ class TeamDetailsScreen extends StatelessWidget {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(left: 18.0, right: 18.0, top: 10),
+                        const EdgeInsets.only(left: 8.0, right: 8.0, top: 10),
                     child: Column(
                       children: [
                         const Text('Last 5 Games',
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.green,
                                 fontWeight: FontWeight.bold)),
                         Row(
@@ -537,11 +543,11 @@ class TeamDetailsScreen extends StatelessWidget {
                                                   : (char == 'L'
                                                       ? Colors.red
                                                       : Colors.grey),
-                                              maxRadius: 14,
+                                              maxRadius: 10,
                                               child: Text(
                                                 char,
                                                 style: const TextStyle(
-                                                    fontSize: 14,
+                                                    fontSize: 12,
                                                     color: Colors.white,
                                                     fontWeight:
                                                         FontWeight.bold),
@@ -566,11 +572,11 @@ class TeamDetailsScreen extends StatelessWidget {
                                                   : (char == 'L'
                                                       ? Colors.red
                                                       : Colors.grey),
-                                              maxRadius: 14,
+                                              maxRadius: 10,
                                               child: Text(
                                                 char,
                                                 style: const TextStyle(
-                                                    fontSize: 14,
+                                                    fontSize: 12,
                                                     color: Colors.white,
                                                     fontWeight:
                                                         FontWeight.bold),
@@ -590,12 +596,12 @@ class TeamDetailsScreen extends StatelessWidget {
                     endIndent: 20,
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
 
                   Text('Form Comparison',
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.green,
                                 fontWeight: FontWeight.bold)),
                                 
@@ -606,8 +612,8 @@ class TeamDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: 10,
-                          width: SizeConfig.screenWidth! - 50,
+                          height: 8,
+                          width: SizeConfig.screenWidth! - 150,
                           child: TeamStatsComparisonBar(
                               formPercentage: prediction.formPercentage!),
                         ),   

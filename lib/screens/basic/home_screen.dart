@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart";
+import "package:carousel_slider/carousel_slider.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
@@ -67,8 +68,54 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late Future<List<Match>> _matches;
+  final ScrollController _scrollController = ScrollController();
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 60), // Adjust duration to control speed
+    );
+
+    _animation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController)
+          ..addListener(() {
+            double maxScrollExtent = _scrollController.position.maxScrollExtent;
+            double position = maxScrollExtent * _animation.value;
+
+            // Automatically scroll to the position calculated by the animation
+            _scrollController.jumpTo(position);
+
+            // Reverse the animation if it completes to create a back and forth effect
+            if (_animation.value == 1.0) {
+              _animationController.reverse();
+            } else if (_animation.value == 0.0) {
+              _animationController.forward();
+            }
+          })
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              _animationController.reverse();
+            } else if (status == AnimationStatus.dismissed) {
+              _animationController.forward();
+            }
+          });
+
+    // Start the animation
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
 
   DateTime selectedDate = DateTime.now();
 
@@ -84,22 +131,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _matches = fetchLiveMatches(); // Initial fetch
-  // }
-
-  // Future<void> _reloadData() async {
-  //   setState(() {
-  //     _matches = fetchLiveMatches(); // Re-fetch on refresh
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         flexibleSpace: Container(
           decoration: const BoxDecoration(),
           child: Padding(
@@ -169,8 +205,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
+              ///Carousel//////////////
+
+              Container(
+                height: 100,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: CarouselSlider(
+                  items: [
+                    //1st Image of Slider
+                    Container(
+                      margin: EdgeInsets.all(6.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        image: DecorationImage(
+                          image: AssetImage('images/ts.PNG'),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+
+                    //2nd Image of Slider
+                    Container(
+                      margin: EdgeInsets.all(6.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        image: DecorationImage(
+                          image: AssetImage('images/ts2.PNG'),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+
+                    //3rd Image of Slider
+                    Container(
+                      margin: EdgeInsets.all(6.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        image: DecorationImage(
+                          image: AssetImage('images/ts3.PNG'),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+                  ],
+                  options: CarouselOptions(
+                    autoPlay: false,
+                    enlargeCenterPage: true,
+                    viewportFraction: 1,
+                    aspectRatio: 2.0,
+                    initialPage: 3,
+                  ),
+                ),
+              ),
+
               // Leagues section
               SingleChildScrollView(
+                controller: _scrollController,
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
@@ -238,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               LiquidPullToRefresh(
                 springAnimationDurationInMilliseconds: 400,
-                color: Colors.green,
+                color: Color.fromARGB(255, 5, 110, 27),
                 height: 70,
                 //////////////////////////
                 onRefresh: () async {
@@ -251,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: SizeConfig.screenWidth,
                   height: SizeConfig.screenHeight,
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 217, 240, 215),
+                      color: Colors.white54,
                       borderRadius: BorderRadius.circular(23)),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
@@ -262,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Padding(
                             padding: EdgeInsets.only(left: 15.0, bottom: 8),
                             child: Text(
-                              'Live Matches', // Text for "Live Matches"
+                              'Live Matches Predictions', // Text for "Live Matches"
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
@@ -275,15 +368,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           LivePredictionsWidget(),
 
                           // Upcoming Matches section
-                          const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 15.0, bottom: 8, top: 20),
-                              child: Text(
-                                  'Upcoming Matches/Predictions', // Text for "Upcoming Matches"
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xCB202020)))),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: const Padding(
+                                padding: EdgeInsets.only(
+                                    left: 15.0, bottom: 8, top: 20),
+                                child: Text(
+                                    'Upcoming Matches Predictions', // Text for "Upcoming Matches"
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xCB202020)))),
+                          ),
                           // New code block
 
                           // Daily Predictions widget

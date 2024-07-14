@@ -51,6 +51,7 @@ dependencies:
   liquid_pull_to_refresh: ^3.0.1
   url_launcher: ^6.3.0
   awesome_dialog: ^3.2.1
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:

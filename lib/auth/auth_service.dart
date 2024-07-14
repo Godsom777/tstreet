@@ -113,7 +113,7 @@ Future<bool> registerUser(String email, String password, BuildContext context) a
       password: password,
     );
     // Perform post-registration operations before navigating
-    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
     return true;
   } on FirebaseAuthException catch (e) {
     String errorMessage = "An error occurred. Please try again.";
@@ -137,7 +137,7 @@ Future<bool> registerUser(String email, String password, BuildContext context) a
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("An unexpected error occurred. Please try again."),
-        duration: Duration(seconds: 5),
+        duration: Duration(seconds: 3),
       ),
     );
     return false;

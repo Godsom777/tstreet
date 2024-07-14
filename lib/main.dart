@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         // Since AuthService is initialized before the app runs, we can directly navigate to the desired screen
         // home: LoginSignupScreen(),
-        home: HomeScreen(),
+        home: LoginSignupScreen(),
       ),
     );
   }

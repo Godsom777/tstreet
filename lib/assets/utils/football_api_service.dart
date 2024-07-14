@@ -75,6 +75,7 @@ class Match {
   final String? homeTeamLogo;
   final String? awayTeamLogo;
   final String? leagueName;
+  final String? dateTime;
   // final String win;
   // final String predictionComment;
 
@@ -92,6 +93,7 @@ class Match {
     required this.homeTeamLogo,
     required this.awayTeamLogo,
     required this.leagueName,
+    required this.dateTime,
   });
 
   factory Match.fromJson(Map<String, dynamic> json) {
@@ -109,6 +111,7 @@ class Match {
       homeTeamLogo: json['teams']['home']['logo'],
       awayTeamLogo: json['teams']['away']['logo'],
       leagueLogo: json['league']['logo'],
+      dateTime: json['fixture']['date']
       // win: json['winner'],
       // predictionComment: json['winner']['name']['comment'],
     );

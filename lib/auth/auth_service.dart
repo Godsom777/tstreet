@@ -48,7 +48,7 @@ Future<UserCredential?> signInWithGoogle(BuildContext context) async {
   );
   UserCredential userCredential = await _auth.signInWithCredential(credential);
   // perform post-sign-in operations before navigating
-  Navigator.push(context, MaterialPageRoute(builder: (context) =>  MainScreen()));
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainScreen()));
   return userCredential;
 }
 
@@ -59,7 +59,7 @@ Future<UserCredential?> signInWithEmailAndPassword(String email, String password
       password: password,
     );
     // On successful sign-in, navigate to MainScreen or show a success message
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainScreen()));
     return credential;
   } on FirebaseAuthException catch (e) {
     // Handle sign-in errors
@@ -113,7 +113,7 @@ Future<bool> registerUser(String email, String password, BuildContext context) a
       password: password,
     );
     // Perform post-registration operations before navigating
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MainScreen()));
     return true;
   } on FirebaseAuthException catch (e) {
     String errorMessage = "An error occurred. Please try again.";

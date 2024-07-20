@@ -1,25 +1,17 @@
-import "dart:convert";
 
 import "package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart";
 import "package:carousel_slider/carousel_slider.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
-import "package:getwidget/getwidget.dart";
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import "package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart";
-import "package:trenches_street/assets/teamCards.dart";
 import "package:trenches_street/assets/utils/SizeConfig.dart";
-import 'package:trenches_street/assets/teamCards.dart';
 import "package:trenches_street/screens/basic/settings.dart";
 import "package:trenches_street/screens/basic/vipScreen.dart";
 import "../../assets/leagues.dart";
-import 'package:http/http.dart' as http;
 
 import "../../assets/utils/football_api_service.dart" as api;
 import "../../components/daily_predictions.dart";
-import "../../models/liveMatchWigets.dart";
 
 class MainScreen extends StatefulWidget {
   @override
@@ -47,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
         inactiveColor: Colors.grey,
         icons: [
           // Icon for Home
+          // ignore: deprecated_member_use
           FontAwesomeIcons.soccerBall, // Icon for Football
           FontAwesomeIcons.crown, // Icon for VIP
           FontAwesomeIcons.whatsapp, // Icon for contact us
@@ -69,7 +62,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  late Future<List<Match>> _matches;
   final ScrollController _scrollController = ScrollController();
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -125,11 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
-  void _updateSelectedDate(DateTime newDate) {
-    setState(() {
-      selectedDate = newDate;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -246,13 +234,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(18),
                         image: DecorationImage(
                           image: AssetImage('images/ts3.PNG'),
-                          fit: BoxFit.fitWidth,
+                          fit: BoxFit.scaleDown,
                         ),
                       ),
                     ),
                   ],
                   options: CarouselOptions(
-                    autoPlay: false,
+                    autoPlay: true,
                     enlargeCenterPage: true,
                     viewportFraction: 1,
                     aspectRatio: 2.0,
@@ -409,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
 class BottomDateBar extends StatelessWidget {
   final Function(DateTime) onDateSelected;
-  DateTime selectedDate; // Add this line
+  DateTime selectedDate; 
 
   BottomDateBar({
     Key? key,
